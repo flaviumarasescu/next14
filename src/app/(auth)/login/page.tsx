@@ -1,5 +1,6 @@
 import { handleGithubLogin, handleLogin } from '@/lib/action'
 import { auth } from '@/lib/auth'
+import LoginForm from '@/components/loginForm'
 
 const Login = async () => {
     const session = await auth()
@@ -12,11 +13,7 @@ const Login = async () => {
                 <button>Login with github</button>
             </form>
 
-            <form action={handleLogin}>
-                <input placeholder="username" name="username" type="username" />
-                <input placeholder="password" name="password" type="password" />
-                <button>Login with credentials</button>
-            </form>
+            <LoginForm />
         </>
     )
 }

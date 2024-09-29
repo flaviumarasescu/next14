@@ -24,7 +24,7 @@ const getData = async (id: string | undefined) => {
     }
 }
 
-export const generateMetadata = async ({ params }) => {
+export const generateMetadata = async ({ params }: any) => {
     const { slug } = params
 
     // const post = await getPost([slug])

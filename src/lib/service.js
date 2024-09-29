@@ -1,44 +1,4 @@
-// const users = [
-//   {
-//     id: 1,
-//     name: 'John',
-//     id: 2,
-//     name: 'John',
-//   },
-// ];
-//
-// const posts = [
-//   {
-//     id: 1,
-//     title: 'Post 1',
-//     body: '...',
-//     userId: 1,
-//   },
-//   {
-//     id: 2,
-//     title: 'Post 1',
-//     body: '...',
-//     userId: 1,
-//   },
-//   {
-//     id: 3,
-//     title: 'Post 1',
-//     body: '...',
-//     userId: 1,
-//   },
-//   {
-//     id: 4,
-//     title: 'Post 1',
-//     body: '...',
-//     userId: 1,
-//   },
-//   {
-//     id: 5,
-//     title: 'Post 1',
-//     body: '...',
-//     userId: 1,
-//   },
-// ];
+'use server'
 
 import { Post, User } from '@/lib/models'
 import { connectToDb } from '@/lib/connection'
@@ -97,6 +57,7 @@ export const getUsers = async () => {
 export const getUser = (id) => {
     try {
         const post = User.findById(id)
+
         return post
     } catch (e) {
         console.error('err getPost e,', e)
@@ -116,11 +77,11 @@ export const createUserService = async (data) => {
     try {
         const { username, password } = data
         await connectToDb()
-
+        console.log('createUserService username', username)
         const user = await User.findOne({ username })
         console.log('user already exist: ', user)
         if (user) {
-            return 'Username already exists'
+            return { error: 'Username already exists' }
         }
 
         const salt = await bcrypt.genSalt(10)

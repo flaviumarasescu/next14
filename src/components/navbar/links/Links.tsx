@@ -4,7 +4,7 @@ import NavLink from './navLink/navLink'
 import { handleGithubLogout } from '@/lib/action'
 import styles from './links.module.css'
 
-const Links = ({ session }) => {
+const Links = ({ session }: any) => {
     const links = [
         {
             title: 'Home page',
@@ -31,7 +31,7 @@ const Links = ({ session }) => {
             {links.map((link) => (
                 <NavLink item={link} key={link.title} />
             ))}
-            {session ? (
+            {typeof session === 'object' && session !== null ? (
                 <>
                     {session?.user?.isAdmin && (
                         <NavLink item={{ title: 'Admin', path: '/admin' }} />

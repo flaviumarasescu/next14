@@ -6,99 +6,80 @@ import { User } from '@/lib/models'
 import { connectToDb } from '@/lib/connection'
 import { User as NextAuthUser, Account, Profile } from 'next-auth'
 import bcrypt from 'bcrypt'
+import { authConfig } from '@/lib/auth.config'
 
 const login = async (credentials) => {
     try {
-        await connectToDb()
-        const user = await User.findOne({ username: credentials?.username })
-        console.log('user from db', user)
-        if (!user) {
-            throw new Error('Wrong credentials')
-        }
+        connectToDb()
+        const user = await User.findOne({
+            username: credentials.username,
+        }).then((user) => {
+            return {
+                id: user?._id,
+                username: user?.username,
+                email: user?.email,
+                isAdmin: user?.isAdmin,
+                password: user?.password,
+            }
+        })
+
+        if (!user) throw new Error('Wrong credentials!')
+
         const isPasswordCorrect = await bcrypt.compare(
             credentials?.password,
             user?.password
         )
 
-        if (!isPasswordCorrect) {
-            throw new Error('Wrong credentials')
-        }
-
+        if (!isPasswordCorrect) throw new Error('Wrong credentials!')
+        console.log('user from auth ', user)
         return user
-    } catch (e) {
-        console.error(e)
-        throw new Error('Failed to login!', e)
+    } catch (err) {
+        console.log(err)
+        throw new Error('Failed to login!')
     }
 }
 
-const config = {
+export const { handlers, auth, signIn, signOut } = NextAuth({
+    ...authConfig,
     providers: [
         GitHub({
             clientId: process.env.GITHUB_ID,
             clientSecret: process.env.GITHUB_SECRET,
         }),
         CredentialsProvider({
-            name: 'Credentials',
-            credentials: {
-                username: {
-                    label: 'Username',
-                    type: 'text',
-                    placeholder: 'jsmith',
-                },
-                password: { label: 'Password', type: 'password' },
-            },
-            async authorize(credentials, req) {
+            async authorize(credentials) {
                 try {
-                    console.log('credentials', credentials)
                     const user = await login(credentials)
                     return user
-                } catch (e) {
+                } catch (err) {
                     return null
                 }
             },
         }),
     ],
     callbacks: {
-        async signIn({
-            user,
-            account,
-            profile,
-        }: {
-            user: NextAuthUser
-            account: Account | null
-            profile?: Profile
-        }) {
-            console.log('userf:', user)
-            console.log('accountf:', account)
-            console.log('profilef:', profile)
-            console.log(
-                "account?.provider === 'credentials'",
-                account?.provider === 'credentials'
-            )
+        async signIn({ user, account, profile }) {
             if (account?.provider === 'github') {
+                connectToDb()
                 try {
-                    await connectToDb()
-                    const user = await User.findOne({ email: profile?.email })
+                    const user = await User.findOne({ email: profile.email })
+
                     if (!user) {
                         const newUser = new User({
-                            username: profile?.name,
-                            email: profile?.email,
-                            image: profile?.avatar_url,
+                            username: profile.login,
+                            email: profile.email,
+                            image: profile.avatar_url,
                         })
+
                         await newUser.save()
                     }
-                } catch (e) {
-                    console.log('err', e)
+                } catch (err) {
+                    console.log(err)
                     return false
                 }
-                return true
-            } else if (account?.provider === 'credentials') {
-                console.log('in credentials')
-                return true
             }
-            return false
+            return true
         },
+        ...authConfig.callbacks,
     },
-}
-
-export const { handlers, auth, signIn, signOut } = NextAuth(config)
+})

@@ -6,9 +6,9 @@ import {
 } from '@/lib/service'
 import { revalidatePath } from 'next/cache'
 import { signIn, signOut } from '@/lib/auth'
-import { redirect } from 'next/navigation'
+// import { redirect } from 'next/navigation'
 
-export const createPost = async (formData) => {
+export const createPost = async (formData: any) => {
     console.log('hello', formData)
     // const title = formData.get('title')
     // const desc = formData.get('desc')
@@ -20,7 +20,7 @@ export const createPost = async (formData) => {
     revalidatePath('/blog')
 }
 
-export const deletePost = async (formData) => {
+export const deletePost = async (formData: any) => {
     console.log('hello', formData)
     // const title = formData.get('title')
     // const desc = formData.get('desc')
@@ -37,24 +37,40 @@ export const handleGithubLogin = async () => {
 }
 
 export const handleGithubLogout = async () => {
-    await signOut('github')
+    'use server'
+    await signOut()
 }
 
-export const handleRegister = async (formData) => {
+export const handleRegister = async (previousState: any, formData: any) => {
+    console.log('previousState', previousState)
     const { username, email, password } = Object.fromEntries(formData)
 
     const user = await createUserService({ username, email, password })
     console.log('new user', user)
-    if (user?._id) {
-        redirect('/blog')
-    }
+    // if (user?._id) {
+    //     redirect('/blog')
+    // }
+    return user
 }
 
-export const handleLogin = async (formData) => {
+export const handleLogin = async (previousState: any, formData: any) => {
     const { username, email, password } = Object.fromEntries(formData)
 
-    await signIn('credentials', { username, password })
-    redirect('/blog')
+    try {
+        const res = await signIn('credentials', { username, password })
+        console.log('res from db', res)
+        return res
+        // redirect('/blog')
+    } catch (e) {
+        console.log('err handleLogin', e)
+        if (e instanceof Error && e.message.includes('CredentialsSignin')) {
+            return { error: 'Invalid username or password' }
+        }
+        throw e
+        // return { error: 'Something went wrong!' }
+    }
+
+    // redirect('/blog')
     // try {
     // } catch (e) {
     //     throw new Error('Login error: ', e)
