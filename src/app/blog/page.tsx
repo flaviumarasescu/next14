@@ -17,7 +17,7 @@ const getData = async () => {
     return res.json()
 }
 
-const BlogPage = async () => {
+const Home = async () => {
     const posts = await getData()
     // const posts = await getPosts();
     console.log('posts', posts)
@@ -29,4 +29,4 @@ const BlogPage = async () => {
     )
 }
 
-export default BlogPage
+export default Home

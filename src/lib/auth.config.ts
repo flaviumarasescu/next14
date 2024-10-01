@@ -37,9 +37,9 @@ export const authConfig = {
                 return false
             }
 
-            if (isOnBlogPage && !user) {
-                return false
-            }
+            // if (isOnBlogPage && !user) {
+            //     return false
+            // }
 
             if (isOnLoginPage && user) {
                 return Response.redirect(new URL('/', request.nextUrl))
