@@ -8,7 +8,6 @@ import { useFormState } from 'react-dom'
 
 const RegisterForm = () => {
     const [state, formAction] = useFormState(handleRegister, undefined)
-    console.log('statefff', state)
     const router = useRouter()
 
     useEffect(() => {

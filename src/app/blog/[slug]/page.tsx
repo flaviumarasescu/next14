@@ -29,7 +29,6 @@ export const generateMetadata = async ({ params }: any) => {
 
     // const post = await getPost([slug])
     const post = await getData(slug)
-    console.log('post din generate meta', post)
     return {
         title: post[0]?.title,
         description: post[0]?.desc,

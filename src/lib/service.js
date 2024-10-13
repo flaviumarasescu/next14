@@ -3,6 +3,7 @@
 import { Post, User } from '@/lib/models'
 import { connectToDb } from '@/lib/connection'
 import bcrypt from 'bcrypt'
+import { auth } from '@/lib/auth'
 
 export const getPosts = async () => {
     try {
@@ -47,20 +48,20 @@ export const deletePostService = async (id) => {
 export const getUsers = async () => {
     try {
         await connectToDb()
-        const posts = User.find()
-        return posts
+        const users = User.find()
+        return users
     } catch (e) {
-        console.error('err getPosts e', e)
+        console.error('err getusers e', e)
     }
 }
 
 export const getUser = (id) => {
     try {
-        const post = User.findById(id)
+        const user = User.findById(id)
 
-        return post
+        return user
     } catch (e) {
-        console.error('err getPost e,', e)
+        console.error('err getuser e,', e)
     }
 }
 
@@ -87,11 +88,6 @@ export const createUserService = async (data) => {
         const salt = await bcrypt.genSalt(10)
         const hashPassword = await bcrypt.hash(password, salt)
 
-        console.log('{ ...data, password: hashPassword }', {
-            ...data,
-            password: hashPassword,
-        })
-
         const newUser = new User({ ...data, password: hashPassword })
         await newUser.save()
         return newUser
@@ -113,11 +109,6 @@ export const loginService = async (data) => {
 
         const salt = await bcrypt.genSalt(10)
         const hashPassword = await bcrypt.hash(password, salt)
-
-        console.log('{ ...data, password: hashPassword }', {
-            ...data,
-            password: hashPassword,
-        })
 
         const newUser = new User({ ...data, password: hashPassword })
         await newUser.save()

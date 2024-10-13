@@ -2,11 +2,9 @@ import { connectToDb } from '@/lib/connection'
 import { NextResponse } from 'next/server'
 import { Post } from '@/lib/models'
 
-export const GET = async (req, {params}) => {
+export const GET = async (req, { params }) => {
     try {
-        console.log('paramsff', params)
         const { slug } = params
-        console.log('idfff', slug)
         connectToDb()
         const post = await Post.findOne({ slug })
         return NextResponse.json(post)

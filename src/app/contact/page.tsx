@@ -1,16 +1,14 @@
-import dynamic from 'next/dynamic';
+import dynamic from 'next/dynamic'
 
 const HydrationTestNoSSR = dynamic(() => import('@/components/hydrationTest'), {
-  ssr: false,
-});
+    ssr: false,
+})
 
 export default function Home() {
-  console.log('contact page it works');
-
-  return (
-    <main>
-      Contact page
-      <HydrationTestNoSSR />
-    </main>
-  );
+    return (
+        <main>
+            Contact page
+            <HydrationTestNoSSR />
+        </main>
+    )
 }

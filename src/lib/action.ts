@@ -3,29 +3,33 @@ import {
     createPostService,
     deletePostService,
     createUserService,
+    getCurrentUser,
 } from '@/lib/service'
 import { revalidatePath } from 'next/cache'
-import { signIn, signOut } from '@/lib/auth'
+import { auth, signIn, signOut } from '@/lib/auth'
 // import { redirect } from 'next/navigation'
 
 export const createPost = async (formData: any) => {
-    console.log('hello', formData)
-    // const title = formData.get('title')
-    // const desc = formData.get('desc')
-    // const [slug] = formData.get('[slug]')
-    // const userId = formData.get('userId')
     const { title, desc, slug, userId } = Object.fromEntries(formData)
 
     await createPostService({ title, desc, slug, userId })
     revalidatePath('/blog')
 }
 
+export const createPrePopulatedPost = async () => {
+    const session = await auth()
+    // const { title, desc, slug, userId } = Object.fromEntries(formData)
+    //
+    await createPostService({
+        title: 'Test title',
+        desc: 'Test desc',
+        slug: 'slugTest',
+        userId: session?.user?.id,
+    })
+    revalidatePath('/blog')
+}
+
 export const deletePost = async (formData: any) => {
-    console.log('hello', formData)
-    // const title = formData.get('title')
-    // const desc = formData.get('desc')
-    // const [slug] = formData.get('[slug]')
-    // const userId = formData.get('userId')
     const { id } = Object.fromEntries(formData)
 
     await deletePostService(id)
@@ -46,10 +50,6 @@ export const handleRegister = async (previousState: any, formData: any) => {
     const { username, email, password } = Object.fromEntries(formData)
 
     const user = await createUserService({ username, email, password })
-    console.log('new user', user)
-    // if (user?._id) {
-    //     redirect('/blog')
-    // }
     return user
 }
 

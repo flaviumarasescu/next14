@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation'
 
 const LoginForm = () => {
     const [state, formAction] = useFormState(handleLogin, undefined)
-    console.log('statefff', state)
     // const router = useRouter()
     //
     // useEffect(() => {

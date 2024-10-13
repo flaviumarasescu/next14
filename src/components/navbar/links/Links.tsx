@@ -1,8 +1,14 @@
+'use client'
 import Link from 'next/link'
 import NavLink from './navLink/navLink'
 
-import { handleGithubLogout } from '@/lib/action'
+import {
+    createPost,
+    createPrePopulatedPost,
+    handleGithubLogout,
+} from '@/lib/action'
 import styles from './links.module.css'
+import { useTransition } from 'react'
 
 const Links = ({ session }: any) => {
     const links = [
@@ -23,8 +29,14 @@ const Links = ({ session }: any) => {
             path: '/blog',
         },
     ]
-    // const session = true;
-    const isAdmin = true
+
+    const [isPending, startTransition] = useTransition()
+
+    const handleClick = () => {
+        startTransition(() => {
+            createPrePopulatedPost()
+        })
+    }
 
     return (
         <section>
@@ -34,7 +46,12 @@ const Links = ({ session }: any) => {
             {typeof session === 'object' && session !== null ? (
                 <>
                     {session?.user?.isAdmin && (
-                        <NavLink item={{ title: 'Admin', path: '/admin' }} />
+                        <>
+                            <NavLink
+                                item={{ title: 'Admin', path: '/admin' }}
+                            />
+                            <button onClick={handleClick}>Create post</button>
+                        </>
                     )}
                     <form className={styles.logout} action={handleGithubLogout}>
                         <button>Logout</button>

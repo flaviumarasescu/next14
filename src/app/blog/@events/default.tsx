@@ -1,5 +1,7 @@
+'use client'
+
 const EventsDefault = () => {
-    return null
+    return 'Default events'
 }
 
 export default EventsDefault

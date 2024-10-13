@@ -1,21 +1,20 @@
 'use client'
 import { usePathname } from 'next/navigation'
 
-const BlogPage = ({ children, rsvps, events }) => {
+const BlogPage = ({ children, rsvps, events }: any) => {
     const path = usePathname()
-    console.log('pathhhhh', path)
 
     return (
         <section>
-            {path === '/blog' ? (
-                <div>
-                    <div>{rsvps}</div>
-                    <div>{events}</div>
-                    <div>{children}</div>
-                </div>
-            ) : (
-                <>{children}</>
-            )}
+            {/*{path === '/blog' ? (*/}
+            <div>
+                <div>{rsvps}</div>
+                <div>{events}</div>
+                <div>{children}</div>
+            </div>
+            {/*) : (*/}
+            {/*    <>{children}</>*/}
+            {/*)}*/}
         </section>
     )
 }

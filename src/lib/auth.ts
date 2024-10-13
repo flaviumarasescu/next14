@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import NextAuth from 'next-auth'
 import type { NextAuthConfig } from 'next-auth'
 import GitHub from 'next-auth/providers/github'
@@ -8,7 +10,7 @@ import { User as NextAuthUser, Account, Profile } from 'next-auth'
 import bcrypt from 'bcrypt'
 import { authConfig } from '@/lib/auth.config'
 
-const login = async (credentials) => {
+const login = async (credentials: any) => {
     try {
         connectToDb()
         const user = await User.findOne({
@@ -31,7 +33,6 @@ const login = async (credentials) => {
         )
 
         if (!isPasswordCorrect) throw new Error('Wrong credentials!')
-        console.log('user from auth ', user)
         return user
     } catch (err) {
         console.log(err)
